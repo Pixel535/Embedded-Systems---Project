@@ -1,0 +1,166 @@
+C51 COMPILER V9.51   U1                                                                    06/16/2022 11:49:22 PAGE 1   
+
+
+C51 COMPILER V9.51, COMPILATION OF MODULE U1
+OBJECT MODULE PLACED IN U1.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE U1.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          #define ON  0
+   4          #define OFF 1
+   5          #define No_Key 0x0C
+   6          #define Warunek (Key_3&Key_2&Key_1)==0
+   7          
+   8          sbit LED = P0^0;
+   9          unsigned char NumCounter = 0;
+  10          unsigned char code Kod[] = {0x7F,0xBF,0xDF,0xEF}; 
+  11          unsigned char bdata Key;
+  12          sbit Key_3 = Key^3;
+  13          sbit Key_2 = Key^2;
+  14          sbit Key_1 = Key^1;
+  15          
+  16          void Delay(void)
+  17          {
+  18   1         unsigned char data x,y;
+  19   1         for(x=0;x<150;x++)
+  20   1            {
+  21   2               for(y=0;y<150;y++) {;}
+  22   2            }
+  23   1      }
+  24          
+  25          void Delay2(void)
+  26          {
+  27   1         unsigned char data x,y;
+  28   1         for(x=0;x<70;x++)
+  29   1            {
+  30   2               for(y=0;y<70;y++) {;}
+  31   2            }
+  32   1      }
+  33          
+  34          void Zapal(unsigned char IloscZapalen)
+  35          {
+  36   1        unsigned char i = 0;
+  37   1        while(i < IloscZapalen)
+  38   1        {
+  39   2          LED = ON; Delay2(); LED = OFF; Delay2();
+  40   2          i++;
+  41   2        }
+  42   1      }
+  43          
+  44          unsigned char KtoryPrzyciskWcisniety(unsigned char Kod_przycisku) 
+  45           {
+  46   1         unsigned char data Value, licznik;                               
+  47   1         unsigned char code Koder[] = {0xE7,0xEB,0xED,0xD7,0xDB,0xDD,0xB7,0xBB,0xBD,0x77,0x7B,0x7D};    
+  48   1         unsigned char code New_Char[] = {'1','2','3','4','5','6','7','8','9','*','0','#'};                     
+             -    
+  49   1         
+  50   1         licznik=0x00;                                                    
+  51   1         while((Koder[licznik]!=Kod_przycisku)&&(licznik<No_Key)){licznik++;} 
+  52   1         Value = No_Key;
+  53   1         if(licznik!=No_Key){Value = New_Char[licznik];}                  
+  54   1         return Value;                                                    
+C51 COMPILER V9.51   U1                                                                    06/16/2022 11:49:22 PAGE 2   
+
+  55   1       }
+  56          
+  57            void WcisnieciePrzycisku (void)  
+  58            {
+  59   1          unsigned char data Value, i = 0;
+  60   1          unsigned char isCalling = 0;
+  61   1          unsigned char isHash = 0;
+  62   1          Value = KtoryPrzyciskWcisniety(Key);     
+  63   1          if(Value != No_Key)        
+  64   1            {
+  65   2              if(Value == '1') {Zapal(1); NumCounter++;}
+  66   2              else if(Value == '2') {Zapal(2); NumCounter++;}
+  67   2              else if(Value == '3') {Zapal(3); NumCounter++;}
+  68   2              else if(Value == '4') {Zapal(4); NumCounter++;}
+  69   2              else if(Value == '5') {Zapal(5); NumCounter++;}
+  70   2              else if(Value == '6') {Zapal(6); NumCounter++;}
+  71   2              else if(Value == '7') {Zapal(7); NumCounter++;}
+  72   2              else if(Value == '8') {Zapal(8); NumCounter++;}
+  73   2              else if(Value == '9') {Zapal(9); NumCounter++;}
+  74   2              else if(Value == '0') {Zapal(0); NumCounter++;}
+  75   2              else if(Value == '*') {isCalling = 1;}
+  76   2              else if(Value == '#') {isHash = 1;}
+  77   2              
+  78   2              if(isCalling == 1 && NumCounter == 9)
+  79   2              {
+  80   3                while(i < 4)
+  81   3                {
+  82   4                  LED = ON; Delay(); Delay2(); LED = OFF; Delay(); Delay2();
+  83   4                  i++;
+  84   4                }
+  85   3                i = 0;
+  86   3                while(i < 2)
+  87   3                {
+  88   4                  LED = ON; Delay2(); LED = OFF; Delay2();
+  89   4                  i++;
+  90   4                }
+  91   3                NumCounter = 0;
+  92   3              }
+  93   2              else if(isCalling == 1 && NumCounter != 9)
+  94   2              {
+  95   3                while(i < 2)
+  96   3                {
+  97   4                  LED = ON; Delay2(); LED = OFF; Delay2(); LED = ON; Delay2(); LED = OFF; Delay();
+  98   4                  i++;
+  99   4                }
+ 100   3                NumCounter = 0;
+ 101   3              }
+ 102   2              else if(isHash == 1)
+ 103   2              {
+ 104   3                while(i < 1)
+ 105   3                {
+ 106   4                  LED = ON; Delay2(); LED = OFF; Delay2(); LED = ON; Delay2(); LED = OFF; Delay();
+ 107   4                  i++;
+ 108   4                }
+ 109   3                NumCounter = 0;
+ 110   3              }
+ 111   2              P3_1 = Value;
+ 112   2            }  
+ 113   1        }  
+ 114            
+ 115          void main(void)  
+ 116          {
+C51 COMPILER V9.51   U1                                                                    06/16/2022 11:49:22 PAGE 3   
+
+ 117   1        unsigned char data ind = 0;
+ 118   1        bit Zezwalaj = 1;         
+ 119   1        while(1) 
+ 120   1        {
+ 121   2          P2 = Kod[ind]; 
+ 122   2          Key = P2;
+ 123   2          if (Warunek)
+ 124   2          {
+ 125   3            if (Zezwalaj == 1)
+ 126   3            {
+ 127   4              WcisnieciePrzycisku(); 
+ 128   4              Zezwalaj = 0;
+ 129   4            }
+ 130   3          }
+ 131   2          else
+ 132   2          {
+ 133   3            if (ind<3) {ind++;}
+ 134   3            else {ind = 0;}
+ 135   3            Zezwalaj = 1;
+ 136   3          }
+ 137   2        } 
+ 138   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    352    ----
+   CONSTANT SIZE    =     28    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

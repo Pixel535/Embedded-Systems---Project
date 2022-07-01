@@ -1,0 +1,368 @@
+C51 COMPILER V9.51   U8                                                                    06/16/2022 11:53:23 PAGE 1   
+
+
+C51 COMPILER V9.51, COMPILATION OF MODULE U8
+OBJECT MODULE PLACED IN U8.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE U8.c BROWSE DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          #define False         0  
+   4          #define True          1
+   5          
+   6          #define LCD_RS    P2_4
+   7          #define LCD_RW    P2_5
+   8          #define LCD_E     P2_6
+   9          #define LCD_DB4   P2_0
+  10          #define LCD_DB5   P2_1
+  11          #define LCD_DB6   P2_2
+  12          #define LCD_DB7   P2_3
+  13          
+  14          #define LCD_DISPLAY_ON      0x0C
+  15          #define LCD_ENTRY_MODE      0x06
+  16          #define LCD_CURSOR_COM      0x0F
+  17          #define LCD_CLEAR           0x01
+  18          #define LCD_CONFIG          0x28
+  19          #define LCD_DISPLAY_OFF     0x08
+  20          #define LCD_CURSOR_BLINK    0x0D
+  21          
+  22          
+  23          static unsigned char code Screen1[] = "  SWB  PROJEKT  "
+  24                                                " |   _[@@]/    |"
+  25                                                " |    d  b     |"  
+  26                                                " MATEUSZ  GAJDA ";
+  27                                                
+  28          static unsigned char code Screen2[] = "  SWB  PROJEKT  "
+  29                                                " /   _[@@]_    )"
+  30                                                " /    d  b     )"  
+  31                                                " MATEUSZ  GAJDA ";
+  32          
+  33          static unsigned char code Screen3[] = "  SWB  PROJEKT  "
+  34                                                " -   _[@@]/    -"
+  35                                                " -    d  b     -"  
+  36                                                " MATEUSZ  GAJDA ";
+  37                                                
+  38          static unsigned char code Screen4[] = "  SWB  PROJEKT  "
+  39                                                " )   _[@@]_    /"
+  40                                                " )    d  b     /"  
+  41                                                " MATEUSZ  GAJDA "; 
+  42          
+  43          static unsigned char code Screen5[] = "  SWB  PROJEKT  "
+  44                                                " |   _[@@]/    |"
+  45                                                " |    d  b     |"  
+  46                                                " MATEUSZ  GAJDA ";
+  47                                                
+  48          unsigned char LOADING[] = {'L', 'O', 'A', 'D', 'I', 'N', 'G'};
+  49          unsigned char LoadingBar[] = {'X'};
+  50          unsigned char DotAndSpace[] = {'.', ' '};
+  51          unsigned char Percentage[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '%'};
+  52           
+  53          void Delay(void)//60ms
+  54          {
+  55   1         unsigned char data x,y;
+C51 COMPILER V9.51   U8                                                                    06/16/2022 11:53:23 PAGE 2   
+
+  56   1         for(x=0;x<50;x++)
+  57   1            {
+  58   2               for(y=0;y<50;y++) {;}
+  59   2            }
+  60   1      }
+  61          
+  62          void Delay2(void)//1ms
+  63          {
+  64   1         unsigned char data x,y;
+  65   1         for(x=0;x<10;x++)
+  66   1            {
+  67   2               for(y=0;y<10;y++) {;}
+  68   2            }
+  69   1      }
+  70          
+  71          void Delay3(void)//5ms
+  72          {
+  73   1         unsigned char data x,y;
+  74   1         for(x=0;x<15;x++)
+  75   1            {
+  76   2               for(y=0;y<15;y++) {;}
+  77   2            }
+  78   1      }
+  79          
+  80          void Delay4(void)
+  81          {
+  82   1         unsigned char data x,y;
+  83   1         for(x=0;x<100;x++)
+  84   1            {
+  85   2               for(y=0;y<100;y++) {;}
+  86   2            }
+  87   1      }
+  88          
+  89          void Lcd_SendCommand (unsigned char LcdCommand)
+  90           {
+  91   1         unsigned char Lcd_Comm = 0;
+  92   1         static bit LCDReady;
+  93   1          
+  94   1         LCD_RS = False;
+  95   1         LCD_RW = False;
+  96   1      
+  97   1         Lcd_Comm = LcdCommand >> 4;
+  98   1         P2 = P2 & 0xF0;
+  99   1         P2 = P2 | Lcd_Comm;
+ 100   1      
+ 101   1         LCD_E = True;
+ 102   1         LCD_E = False;
+ 103   1      
+ 104   1         Lcd_Comm = LcdCommand & 0x0F;  
+ 105   1         P2 = P2 & 0xF0;      
+ 106   1         P2 = P2 | Lcd_Comm;
+ 107   1      
+ 108   1         LCD_E = True;
+ 109   1         LCD_E = False;
+ 110   1      
+ 111   1         P2 = P2 | 0x0F;     
+ 112   1      
+ 113   1         LCD_RW = True;
+ 114   1         LCD_RS = False;
+ 115   1         
+ 116   1         LCDReady = 1;
+ 117   1         while (LCDReady == 1)
+C51 COMPILER V9.51   U8                                                                    06/16/2022 11:53:23 PAGE 3   
+
+ 118   1         {
+ 119   2            LCD_E = True;
+ 120   2            LCDReady = LCD_DB7;
+ 121   2            LCD_E = False;
+ 122   2            LCD_E = True;
+ 123   2            LCD_E = False;
+ 124   2         }          
+ 125   1       }
+ 126           
+ 127           static void Lcd_SendData (unsigned char LcdData)
+ 128           {
+ 129   1         unsigned char Lcd_Data = 0;
+ 130   1         static bit LCDReady;
+ 131   1       
+ 132   1         LCD_RS = True;
+ 133   1         LCD_RW = False;
+ 134   1      
+ 135   1         Lcd_Data = LcdData >> 4;
+ 136   1         P2 = P2 & 0xF0;
+ 137   1         P2 = P2 | Lcd_Data;
+ 138   1      
+ 139   1         LCD_E = True;
+ 140   1         LCD_E = False;
+ 141   1      
+ 142   1         Lcd_Data = LcdData & 0x0F;  
+ 143   1         P2 = P2 & 0xF0;   
+ 144   1         P2 = P2 | Lcd_Data;
+ 145   1      
+ 146   1         LCD_E = True;
+ 147   1         LCD_E = False;
+ 148   1      
+ 149   1         P2 = P2 | 0x0F;
+ 150   1      
+ 151   1         LCD_RW = True;
+ 152   1         LCD_RS = False;
+ 153   1         
+ 154   1         LCDReady = 1;
+ 155   1         while (LCDReady == 1)
+ 156   1         {
+ 157   2           LCD_E = True;
+ 158   2           LCDReady = LCD_DB7;
+ 159   2           LCD_E  = False;
+ 160   2           LCD_E  = True;
+ 161   2           LCD_E  = False;
+ 162   2         }             
+ 163   1       }
+ 164           
+ 165           void Lcd_DisplayChar (char Singlechar)
+ 166           {
+ 167   1         Lcd_SendData(Singlechar);
+ 168   1       }
+ 169           
+ 170           void Lcd_Cursor (char row, char column)
+ 171           {
+ 172   1         if (row == 1) Lcd_SendCommand (0x80 + column - 1);
+ 173   1         if (row == 2) Lcd_SendCommand (0xC0 + column - 1);
+ 174   1         if (row == 3) Lcd_SendCommand (0x90 + column - 1);
+ 175   1         if (row == 4) Lcd_SendCommand (0xD0 + column - 1);
+ 176   1       }
+ 177           
+ 178           void Lcd_DisplayRow (char row, char *string)
+ 179           {
+C51 COMPILER V9.51   U8                                                                    06/16/2022 11:53:23 PAGE 4   
+
+ 180   1         char i;
+ 181   1         Lcd_Cursor (row, 1);
+ 182   1         for (i=0; i<16; i++) Lcd_DisplayChar (*string++);
+ 183   1       }
+ 184           
+ 185           void Lcd_DisplayScreen (char *ptr)
+ 186           {
+ 187   1         Lcd_DisplayRow(1,ptr +  0);
+ 188   1         Lcd_DisplayRow(2,ptr + 16);
+ 189   1         Lcd_DisplayRow(3,ptr + 32);
+ 190   1         Lcd_DisplayRow(4,ptr + 48);
+ 191   1       }
+ 192            
+ 193           void LcdLoading(void)
+ 194           {
+ 195   1          unsigned char index = 0;
+ 196   1          unsigned char i = 0;
+ 197   1          unsigned char DotsNumber = 0;
+ 198   1          unsigned char DidCycleEnd = 0;
+ 199   1          Lcd_Cursor (1, 1);
+ 200   1          for(i = 0; i < 16; i++)
+ 201   1          {
+ 202   2            Lcd_DisplayChar('-');
+ 203   2          }
+ 204   1          Lcd_Cursor (2, 4);
+ 205   1          while(index < 7)
+ 206   1          {
+ 207   2            Lcd_DisplayChar(LOADING[index]);
+ 208   2            Delay4();
+ 209   2            index++;
+ 210   2          }
+ 211   1          i = 0;
+ 212   1          index = 0;
+ 213   1          for(i = 0; i < 3; i++)
+ 214   1          {
+ 215   2            Lcd_DisplayChar(DotAndSpace[0]);
+ 216   2            Delay4();
+ 217   2          }
+ 218   1          i = 0;
+ 219   1          index = 1;
+ 220   1          Lcd_Cursor (3, 9);
+ 221   1          Lcd_DisplayChar(Percentage[0]);
+ 222   1          Lcd_DisplayChar(Percentage[10]);
+ 223   1          Lcd_Cursor (2, 11);
+ 224   1          for(i = 0; i < 3; i++)
+ 225   1          {
+ 226   2            Lcd_DisplayChar(DotAndSpace[1]);
+ 227   2            DotsNumber = 0;
+ 228   2          }
+ 229   1          Delay4();
+ 230   1          while(index < 10)
+ 231   1          {
+ 232   2            Lcd_Cursor (3, 8);
+ 233   2            Lcd_DisplayChar(Percentage[index]);
+ 234   2            Lcd_Cursor (4, index + 3);
+ 235   2            Lcd_DisplayChar(LoadingBar[0]);
+ 236   2            if(DotsNumber == 0 && DidCycleEnd == 0)
+ 237   2            {
+ 238   3              Lcd_Cursor (2, 11);
+ 239   3              Lcd_DisplayChar(DotAndSpace[0]);
+ 240   3              DotsNumber = 1;
+ 241   3              DidCycleEnd = 1;
+C51 COMPILER V9.51   U8                                                                    06/16/2022 11:53:23 PAGE 5   
+
+ 242   3            }
+ 243   2            else if(DotsNumber == 1 && DidCycleEnd == 0)
+ 244   2            {
+ 245   3              Lcd_Cursor (2, 12);
+ 246   3              Lcd_DisplayChar(DotAndSpace[0]);
+ 247   3              DotsNumber = 2;
+ 248   3              DidCycleEnd = 1;
+ 249   3            }
+ 250   2            else if(DotsNumber == 2 && DidCycleEnd == 0)
+ 251   2            {
+ 252   3              Lcd_Cursor (2, 13);
+ 253   3              Lcd_DisplayChar(DotAndSpace[0]);
+ 254   3              DotsNumber = 3;
+ 255   3              DidCycleEnd = 1;
+ 256   3            }
+ 257   2            else if(DotsNumber == 3 && DidCycleEnd == 0)
+ 258   2            {
+ 259   3              Lcd_Cursor (2, 11);
+ 260   3              Lcd_DisplayChar(DotAndSpace[1]);
+ 261   3              Lcd_DisplayChar(DotAndSpace[1]);
+ 262   3              Lcd_DisplayChar(DotAndSpace[1]);
+ 263   3              DotsNumber = 0;
+ 264   3            }
+ 265   2            index++;
+ 266   2            DidCycleEnd = 0;
+ 267   2            Delay4();
+ 268   2          }
+ 269   1          Lcd_Cursor (3, 7);
+ 270   1          Lcd_DisplayChar(Percentage[1]);
+ 271   1          Lcd_DisplayChar(Percentage[0]);
+ 272   1          Lcd_Cursor (4, 13);
+ 273   1          Lcd_DisplayChar(LoadingBar[0]);
+ 274   1          Lcd_Cursor (2, 12);
+ 275   1          Lcd_DisplayChar(DotAndSpace[0]);
+ 276   1          Delay4();
+ 277   1          Lcd_DisplayChar(DotAndSpace[0]);
+ 278   1          Delay();
+ 279   1          
+ 280   1       }
+ 281           
+ 282           void LcdInitialize(void)
+ 283           {
+ 284   1         Delay();
+ 285   1         P2 = 0x83;
+ 286   1         LCD_E   = True;
+ 287   1         Delay2();
+ 288   1         
+ 289   1         LCD_E   = False;
+ 290   1         Delay3();
+ 291   1         
+ 292   1         LCD_E   = True;
+ 293   1         Delay2();
+ 294   1         
+ 295   1         LCD_E   = False;
+ 296   1         Delay2();
+ 297   1         
+ 298   1         LCD_E   = True;
+ 299   1         Delay2();
+ 300   1         
+ 301   1         LCD_E   = False;
+ 302   1         Delay2();
+ 303   1         
+C51 COMPILER V9.51   U8                                                                    06/16/2022 11:53:23 PAGE 6   
+
+ 304   1         LCD_DB4 = False;
+ 305   1         LCD_E   = True;
+ 306   1         Delay2();
+ 307   1           
+ 308   1         LCD_E   = False;
+ 309   1         Delay2();
+ 310   1         
+ 311   1         Lcd_SendCommand(LCD_CONFIG);     
+ 312   1         Lcd_SendCommand(LCD_CLEAR);      
+ 313   1         Lcd_SendCommand(LCD_DISPLAY_OFF);
+ 314   1         Lcd_SendCommand(LCD_DISPLAY_ON); 
+ 315   1         Lcd_SendCommand(LCD_ENTRY_MODE); 
+ 316   1         Lcd_SendCommand(LCD_CLEAR);     
+ 317   1       }
+ 318           
+ 319          void main(void){
+ 320   1        LcdInitialize();
+ 321   1        LcdLoading();
+ 322   1        while(1) 
+ 323   1        {
+ 324   2          Lcd_DisplayScreen(Screen1);
+ 325   2          Delay4();
+ 326   2          Lcd_DisplayScreen(Screen2);
+ 327   2          Delay4();
+ 328   2          Lcd_DisplayScreen(Screen3);
+ 329   2          Delay4();
+ 330   2          Lcd_DisplayScreen(Screen4);
+ 331   2          Delay4();
+ 332   2          Lcd_DisplayScreen(Screen5);
+ 333   2          Delay4();
+ 334   2        }
+ 335   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    725    ----
+   CONSTANT SIZE    =    325    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     21       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

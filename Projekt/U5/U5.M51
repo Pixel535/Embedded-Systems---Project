@@ -1,0 +1,60 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/16/2022  13:25:27  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE U5.obj TO U5 RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  U5.obj (U5)
+  C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  U5 (U5)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     000CH     UNIT         ?C_C51STARTUP
+            CODE    000FH     0001H     UNIT         ?PR?MAIN?U5
+
+
+
+OVERLAY MAP OF MODULE:   U5 (U5)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?U5
+
+
+
+SYMBOL TABLE OF MODULE:  U5 (U5)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        U5
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:000FH         PUBLIC        main
+  -------         PROC          MAIN
+  C:000FH         LINE#         3
+  C:000FH         LINE#         4
+  C:000FH         LINE#         6
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        U5
+
+Program Size: data=9.0 xdata=0 code=16
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
